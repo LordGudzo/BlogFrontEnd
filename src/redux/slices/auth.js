@@ -7,6 +7,11 @@ export const fetchAuth = createAsyncThunk('auth/fetchUserData', async (params) =
     return data;
 });
 
+export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async () => {
+    const { data } = await axios.get('/auth/me');
+    return data;
+});
+
 const initialState = {
     data: null,
     status: 'loading'
@@ -32,11 +37,23 @@ const authSlice = createSlice({
         [fetchAuth.rejected]: (state) => {
             state.data = null;
             state.status = 'error'
+        },
+        [fetchAuthMe.pending]: (state) => {
+            state.data = null;
+            state.status = 'loading'
+        },
+        [fetchAuthMe.fulfilled]: (state, action) => {
+            state.data = action.payload;
+            state.status = 'loaded'
+        },
+        [fetchAuthMe.rejected]: (state) => {
+            state.data = null;
+            state.status = 'error'
         }
     }
 })
 
-export const selectIsAuth = (state) =>Boolean(state.auth.data);
+export const selectIsAuth = (state) => Boolean(state.auth.data);
 
 export const authReduser = authSlice.reducer;
 
